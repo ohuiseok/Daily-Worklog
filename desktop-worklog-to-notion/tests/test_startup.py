@@ -20,20 +20,33 @@ def test_startup_folder_uses_roaming_appdata(monkeypatch, tmp_path):
 def test_shortcut_command_points_to_target():
     shortcut = Path("C:/Users/me/AppData/Roaming/Startup/Desktop Worklog to Notion.lnk")
     target = Path("C:/Users/me/AppData/Local/DesktopWorklogToNotion/app/app.exe")
+    runner = target.parent / "run-hidden.vbs"
 
-    command = startup.shortcut_command(shortcut, target)
+    command = startup.shortcut_command(shortcut, target, runner)
 
     assert "WScript.Shell" in command
     assert str(shortcut) in command
-    assert str(target) in command
+    assert "wscript.exe" in command
+    assert str(runner) in command
     assert str(target.parent) in command
+
+
+def test_hidden_runner_script_runs_target_hidden():
+    target = Path("C:/Users/me/AppData/Local/DesktopWorklogToNotion/app/app.exe")
+
+    script = startup.hidden_runner_script(target)
+
+    assert "WScript.Shell" in script
+    assert str(target) in script
+    assert " run" in script
+    assert ", 0, False" in script
 
 
 def test_ensure_startup_shortcut_uses_creator(monkeypatch, tmp_path):
     calls = []
 
-    def fake_create(shortcut_path, target_path):
-        calls.append((shortcut_path, target_path))
+    def fake_create(shortcut_path, target_path, runner_path):
+        calls.append((shortcut_path, target_path, runner_path))
         shortcut_path.write_text("shortcut", encoding="utf-8")
 
     monkeypatch.setattr(startup, "_create_shortcut", fake_create)
@@ -45,7 +58,10 @@ def test_ensure_startup_shortcut_uses_creator(monkeypatch, tmp_path):
         target_path=target,
     )
 
-    assert calls == [(shortcut, target.resolve())]
+    runner = target.resolve().parent / "run-hidden.vbs"
+    assert calls == [(shortcut, target.resolve(), runner)]
     assert result.created is True
     assert result.shortcut_path == shortcut
     assert result.target_path == target.resolve()
+    assert result.runner_path == runner
+    assert runner.exists()
