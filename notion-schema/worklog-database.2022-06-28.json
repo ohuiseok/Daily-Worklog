@@ -1,0 +1,70 @@
+{
+  "title": "Worklog",
+  "is_inline": true,
+  "properties": {
+    "Name": {
+      "title": {}
+    },
+    "Date": {
+      "date": {}
+    },
+    "Source": {
+      "select": {
+        "options": [
+          {
+            "name": "Browser",
+            "color": "blue"
+          },
+          {
+            "name": "Desktop",
+            "color": "green"
+          }
+        ]
+      }
+    },
+    "Project": {
+      "rich_text": {}
+    },
+    "Status": {
+      "select": {
+        "options": [
+          {
+            "name": "Success",
+            "color": "green"
+          },
+          {
+            "name": "Failed",
+            "color": "red"
+          },
+          {
+            "name": "Skipped",
+            "color": "gray"
+          }
+        ]
+      }
+    },
+    "Summary": {
+      "rich_text": {}
+    },
+    "Written Chunks": {
+      "number": {
+        "format": "number"
+      }
+    },
+    "Main Domains": {
+      "multi_select": {
+        "options": []
+      }
+    },
+    "Commit Count": {
+      "number": {
+        "format": "number"
+      }
+    },
+    "Modified Files": {
+      "number": {
+        "format": "number"
+      }
+    }
+  }
+}

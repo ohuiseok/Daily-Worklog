@@ -1,0 +1,80 @@
+export const DEVELOPER_DOMAINS = [
+  "github.com",
+  "gitlab.com",
+  "bitbucket.org",
+  "dev.azure.com",
+  "stackoverflow.com",
+  "stackexchange.com",
+  "atlassian.net",
+  "jira.com",
+  "linear.app",
+  "shortcut.com",
+  "trello.com",
+  "asana.com",
+  "clickup.com",
+  "monday.com",
+  "notion.com",
+  "notion.so",
+  "notion.site",
+  "confluence.com",
+  "docs.google.com",
+  "drive.google.com",
+  "coda.io",
+  "slite.com",
+  "figma.com",
+  "postman.com",
+  "vercel.com",
+  "netlify.com",
+  "platform.openai.com"
+];
+
+export const AI_TOOL_DOMAINS = [
+  "chatgpt.com",
+  "chat.openai.com",
+  "claude.ai",
+  "gemini.google.com",
+  "aistudio.google.com",
+  "perplexity.ai",
+  "poe.com",
+  "you.com",
+  "phind.com",
+  "copilot.microsoft.com",
+  "grok.com",
+  "x.ai",
+  "platform.openai.com",
+  "console.anthropic.com",
+  "ai.google.dev",
+  "console.groq.com",
+  "groq.com",
+  "openrouter.ai",
+  "together.ai",
+  "replicate.com",
+  "huggingface.co",
+  "mistral.ai",
+  "console.mistral.ai",
+  "cohere.com",
+  "dashboard.cohere.com",
+  "deepseek.com",
+  "platform.deepseek.com",
+  "cursor.com",
+  "windsurf.com",
+  "lovable.dev",
+  "bolt.new",
+  "replit.com",
+  "v0.dev",
+  "base44.com"
+];
+
+export const BLOCKED_DOMAINS = [
+  "accounts.google.com",
+  "mail.google.com",
+  "gmail.com",
+  "outlook.live.com",
+  "outlook.office.com",
+  "paypal.com",
+  "stripe.com"
+];
+
+export function defaultAllowedDomains(): string[] {
+  return [...new Set([...DEVELOPER_DOMAINS, ...AI_TOOL_DOMAINS])].sort();
+}

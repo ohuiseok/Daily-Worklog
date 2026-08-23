@@ -1,0 +1,27 @@
+.DS_Store
+Thumbs.db
+
+# Local secrets and runtime state
+.env
+.env.*
+!.env.example
+.worklog/
+
+# Dependency folders
+node_modules/
+.venv/
+venv/
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Build intermediates
+build/
+*.spec
+*.egg-info/
+
+# Local temporary files
+tmp_*.csv
+test_workspace/

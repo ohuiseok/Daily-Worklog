@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>브라우저 작업일지 설정</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f7f4;
+        --panel: #ffffff;
+        --text: #1f2933;
+        --muted: #667085;
+        --line: #d9dee6;
+        --accent: #2563eb;
+        --accent-weak: #e8f0ff;
+        --ok: #147a42;
+        --error: #b42318;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 680px;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      main {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 28px;
+      }
+
+      header {
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status {
+        width: 100%;
+        margin: 12px 0 0;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        color: var(--muted);
+        font-size: 13px;
+        text-align: left;
+      }
+
+      .status[data-tone="ok"] {
+        border-color: #a7d8bd;
+        background: #effaf3;
+        color: var(--ok);
+      }
+
+      .status[data-tone="error"] {
+        border-color: #f4b8b3;
+        background: #fff1f0;
+        color: var(--error);
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10;
+        max-width: 360px;
+        padding: 12px 14px;
+        border: 1px solid #a7d8bd;
+        border-radius: 8px;
+        background: #effaf3;
+        color: var(--ok);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
+        font-size: 13px;
+        font-weight: 650;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: opacity 150ms ease, transform 150ms ease;
+      }
+
+      .toast[data-visible="true"] {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast[data-tone="error"] {
+        border-color: #f4b8b3;
+        background: #fff1f0;
+        color: var(--error);
+      }
+
+      .setup {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .guide {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding: 16px 18px;
+        border: 1px solid #bfd0f5;
+        border-radius: 8px;
+        background: #f4f8ff;
+      }
+
+      .guide h2 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: 0;
+      }
+
+      .guide ol {
+        margin: 0;
+        padding-left: 22px;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .guide a {
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .guide a:hover {
+        text-decoration: underline;
+      }
+
+      .guide-note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .step {
+        min-height: 98px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .step-number {
+        display: inline-flex;
+        width: 24px;
+        height: 24px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        border-radius: 999px;
+        background: var(--accent-weak);
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .step h2,
+      .panel-title {
+        letter-spacing: 0;
+      }
+
+      .step h2 {
+        margin: 0 0 5px;
+        font-size: 14px;
+      }
+
+      .step p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      form {
+        display: grid;
+        gap: 16px;
+      }
+
+      .panel {
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .panel-title {
+        margin: 0 0 14px;
+        font-size: 16px;
+      }
+
+      .field {
+        display: grid;
+        gap: 7px;
+        margin-bottom: 14px;
+      }
+
+      .field:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+      }
+
+      input {
+        height: 38px;
+        padding: 0 10px;
+      }
+
+      textarea {
+        min-height: 108px;
+        padding: 10px;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus {
+        border-color: var(--accent);
+        outline: 3px solid var(--accent-weak);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      button {
+        height: 36px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        cursor: pointer;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      button:hover {
+        border-color: #aeb7c4;
+        background: #f9fafb;
+      }
+
+      .primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .primary:hover {
+        border-color: #1d4ed8;
+        background: #1d4ed8;
+      }
+
+      .target-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .target-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 34px;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+      }
+
+      .target-button {
+        height: auto;
+        min-height: 34px;
+        padding: 0;
+        border: 0;
+        text-align: left;
+        background: transparent;
+      }
+
+      .target-button:hover {
+        background: transparent;
+      }
+
+      .target-content {
+        min-width: 0;
+      }
+
+      .target-title {
+        display: block;
+        font-weight: 700;
+      }
+
+      .target-id {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 11px;
+        overflow-wrap: anywhere;
+      }
+
+      .copy-button {
+        display: inline-flex;
+        width: 30px;
+        height: 30px;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border-radius: 6px;
+      }
+
+      .copy-button svg {
+        width: 16px;
+        height: 16px;
+        pointer-events: none;
+      }
+
+      .two-column {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 16px;
+      }
+    </style>
+    <script type="module" crossorigin src="/options.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill.js">
+    <link rel="modulepreload" crossorigin href="/assets/settingsStore.js">
+  </head>
+  <body>
+    <main>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <header>
+        <div>
+          <h1>브라우저 작업일지 설정</h1>
+          <p class="subtitle">Notion 연결을 한 번만 설정하면, 팝업에서 브라우저 작업일지를 업로드할 수 있습니다.</p>
+        </div>
+      </header>
+
+      <section class="guide" aria-label="Notion setup guide">
+        <h2>처음 설정 순서</h2>
+        <ol>
+          <li>Notion에서 작업일지를 저장할 새 데이터베이스를 만듭니다. 예: <strong>Daily Worklog</strong></li>
+          <li><a href="https://www.notion.so/profile/integrations" target="_blank" rel="noreferrer">Notion 개발자 포털</a>에서 개인 액세스 토큰 화면을 열고 새 토큰을 만듭니다.</li>
+          <li><strong>기능</strong>에서 콘텐츠 읽기, 콘텐츠 업데이트, 콘텐츠 삽입을 켭니다.</li>
+          <li>생성된 토큰 값을 복사합니다.</li>
+          <li><strong>콘텐츠 사용 권한</strong> 탭에서 1번에서 만든 데이터베이스를 추가합니다.</li>
+          <li>아래 <strong>Notion 토큰</strong> 칸에 토큰을 붙여넣고, <strong>접근 가능한 DB 찾기</strong>를 누릅니다.</li>
+        </ol>
+        <p class="guide-note">토큰은 비밀번호처럼 다뤄야 합니다. GitHub, 블로그, 스크린샷에 공개하지 마세요.</p>
+      </section>
+
+      <section class="setup" aria-label="Setup steps">
+        <article class="step">
+          <span class="step-number">1</span>
+          <h2>토큰 저장</h2>
+          <p>개인 Notion Integration의 내부 토큰을 입력합니다.</p>
+        </article>
+        <article class="step">
+          <span class="step-number">2</span>
+          <h2>권한 확인</h2>
+          <p>Integration이 접근할 수 있는 Notion 데이터베이스를 먼저 찾습니다.</p>
+        </article>
+        <article class="step">
+          <span class="step-number">3</span>
+          <h2>선택 후 준비</h2>
+          <p>검색 결과를 선택한 뒤 필요한 Notion 속성을 자동으로 추가합니다.</p>
+        </article>
+      </section>
+
+      <form id="settings-form">
+        <section class="two-column">
+          <div class="panel">
+            <h2 class="panel-title">Notion 연결</h2>
+            <div class="field">
+              <label for="notion-token">Notion 토큰</label>
+              <input id="notion-token" name="notionToken" type="password" autocomplete="off" placeholder="ntn_xxx" />
+              <div class="hint">내부 Integration 토큰을 입력하세요. 토큰은 브라우저 확장 프로그램의 로컬 저장소에만 저장됩니다.</div>
+            </div>
+            <div class="actions">
+              <button id="save-settings" class="primary" type="submit">토큰 저장</button>
+              <button id="search-targets" type="button">접근 가능한 DB 찾기</button>
+            </div>
+            <div id="target-list" class="target-list" aria-live="polite"></div>
+            <div class="field">
+              <label for="database-id">선택된 데이터베이스 ID</label>
+              <input id="database-id" name="databaseId" type="text" autocomplete="off" placeholder="위 검색 결과를 클릭하면 자동 입력됩니다" />
+              <div class="hint">검색 결과가 보이지 않을 때만 Notion의 데이터 소스 ID를 직접 붙여넣으세요.</div>
+            </div>
+            <div class="actions">
+              <button id="save-database-id" class="primary" type="button">DB ID 저장</button>
+              <button id="ensure-schema" type="button">스키마 준비</button>
+            </div>
+            <p id="save-status" class="status" role="status">준비됨</p>
+          </div>
+
+          <div class="panel">
+            <h2 class="panel-title">캡처 범위</h2>
+            <div class="field">
+              <label for="user-allowed-domains">추가 허용 도메인</label>
+              <textarea id="user-allowed-domains" name="userAllowedDomains" rows="7" placeholder="example.com&#10;internal.company.com"></textarea>
+              <div class="hint">개발, 문서, AI 서비스 도메인은 기본 포함되어 있습니다. 사내 도메인이나 개인 도메인만 추가하세요.</div>
+            </div>
+            <div class="actions">
+              <button id="save-domains" class="primary" type="button">도메인 저장</button>
+            </div>
+          </div>
+        </section>
+      </form>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+{
+  "manifest_version": 3,
+  "name": "Browser Worklog to Notion",
+  "description": "Capture user-written browser work locally and prepare daily Notion worklogs.",
+  "version": "0.1.0",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["tabs", "storage", "idle"],
+  "host_permissions": [
+    "https://api.notion.com/*",
+    "https://*.aistudio.google.com/*",
+    "https://*.ai.google.dev/*",
+    "https://*.asana.com/*",
+    "https://*.atlassian.net/*",
+    "https://*.base44.com/*",
+    "https://*.bitbucket.org/*",
+    "https://*.bolt.new/*",
+    "https://github.com/*",
+    "https://*.github.com/*",
+    "https://gitlab.com/*",
+    "https://*.gitlab.com/*",
+    "https://*.coda.io/*",
+    "https://*.cohere.com/*",
+    "https://*.confluence.com/*",
+    "https://*.cursor.com/*",
+    "https://*.deepseek.com/*",
+    "https://*.dev.azure.com/*",
+    "https://*.docs.google.com/*",
+    "https://*.drive.google.com/*",
+    "https://*.figma.com/*",
+    "https://*.grok.com/*",
+    "https://*.huggingface.co/*",
+    "https://*.linear.app/*",
+    "https://*.lovable.dev/*",
+    "https://*.mistral.ai/*",
+    "https://*.monday.com/*",
+    "https://*.netlify.com/*",
+    "https://*.notion.so/*",
+    "https://notion.so/*",
+    "https://*.notion.site/*",
+    "https://*.openrouter.ai/*",
+    "https://*.perplexity.ai/*",
+    "https://*.phind.com/*",
+    "https://*.platform.deepseek.com/*",
+    "https://*.platform.openai.com/*",
+    "https://*.poe.com/*",
+    "https://*.postman.com/*",
+    "https://*.replit.com/*",
+    "https://*.replicate.com/*",
+    "https://*.shortcut.com/*",
+    "https://*.slite.com/*",
+    "https://*.stackoverflow.com/*",
+    "https://*.stackexchange.com/*",
+    "https://*.together.ai/*",
+    "https://*.trello.com/*",
+    "https://*.v0.dev/*",
+    "https://*.vercel.com/*",
+    "https://*.windsurf.com/*",
+    "https://*.x.ai/*",
+    "https://*.you.com/*",
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://perplexity.ai/*"
+  ]
+}
