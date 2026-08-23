@@ -31,12 +31,12 @@ export function buildBrowserNotionPayload(input: BrowserPayloadInput): Record<st
 
 export function buildBrowserBlocks(summary: BrowserSummary): Record<string, unknown>[] {
   return [
-    heading("브라우저에서 작성한 것"),
+    heading("오늘 브라우저 작업"),
     ...summary.bullets.map((bullet) => bulletedItem(bullet)),
-    heading("작성 내용"),
+    heading("사이트별 작성 내용"),
     ...summary.details.map((detail) => bulletedItem(detail)),
-    heading("근거"),
-    bulletedItem(`작성 chunk: ${summary.writtenChunks}개`),
+    heading("근거 지표"),
+    bulletedItem(`작성 기록: ${summary.writtenChunks}개`),
     bulletedItem(
       `주요 사이트: ${summary.mainDomains.length ? summary.mainDomains.join(", ") : "없음"}`
     )
